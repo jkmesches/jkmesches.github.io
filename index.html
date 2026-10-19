@@ -4,86 +4,253 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Joseph Mesches</title>
-<meta name="description" content="Joseph Mesches — Electrical Engineering student and critical-care flight paramedic. Résumé, CV, and contact links.">
+<meta name="description" content="Joseph Mesches — electrical engineering student and critical-care flight paramedic. Choose a résumé (biomedical, hardware, or machine learning), read the full CV, or get in touch.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --accent:#1F4E5F;
-    --accent-2:#2c6e84;
-    --ink:#1c1c1e;
-    --muted:#5f646b;
-    --bg:#f4f6f7;
-    --card:#ffffff;
-    --line:#e3e7ea;
+    --bg:#f5f8f9;
+    --surface:#ffffff;
+    --ink:#14242a;
+    --muted:#566a71;
+    --accent:#1f4e5f;
+    --accent-soft:#e8f0f2;
+    --trace:#2e8ba6;
+    --line:#e1e8ea;
+    --paper-fade:rgba(255,255,255,0);
+    --radius:14px;
+    --shadow:0 18px 40px -22px rgba(20,36,42,.45);
   }
   @media (prefers-color-scheme: dark){
     :root{
-      --ink:#eef1f3; --muted:#a7afb6; --bg:#12171a; --card:#1a2226; --line:#2b353b;
-      --accent:#4aa3bd; --accent-2:#6cbdd4;
+      --bg:#0d1518;
+      --surface:#141f23;
+      --ink:#e9f0f2;
+      --muted:#9db0b6;
+      --accent:#58aac2;
+      --accent-soft:#17303a;
+      --trace:#5fc9e0;
+      --line:#26343a;
+      --shadow:0 20px 44px -22px rgba(0,0,0,.65);
     }
   }
   *{box-sizing:border-box}
   html,body{margin:0}
   body{
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font-family:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
     background:var(--bg); color:var(--ink);
     min-height:100vh; display:flex; align-items:center; justify-content:center;
-    padding:24px; line-height:1.5;
+    padding:28px 16px; line-height:1.5; -webkit-font-smoothing:antialiased;
   }
   .card{
-    width:100%; max-width:460px; background:var(--card);
-    border:1px solid var(--line); border-radius:16px; overflow:hidden;
-    box-shadow:0 10px 30px rgba(0,0,0,.08);
+    width:100%; max-width:540px; background:var(--surface);
+    border:1px solid var(--line); border-radius:var(--radius);
+    padding:30px 28px 24px; box-shadow:var(--shadow);
   }
-  .bar{height:6px;background:linear-gradient(90deg,var(--accent),var(--accent-2))}
-  .inner{padding:32px 28px 26px}
-  h1{margin:0 0 6px; font-size:1.9rem; letter-spacing:-.01em}
-  .titles{margin:0 0 22px; color:var(--muted); font-size:.98rem}
-  .titles .hl{color:var(--accent); font-weight:600}
-  .links{display:flex; flex-direction:column; gap:12px}
+
+  /* ---- hero: the signal trace (ECG -> SAR chirp) ---- */
+  .trace{display:block; width:100%; height:58px; overflow:visible}
+  .trace .base{stroke:var(--line); stroke-width:1}
+  .trace .wave{
+    fill:none; stroke:var(--trace); stroke-width:2.1;
+    stroke-linecap:round; stroke-linejoin:round;
+    stroke-dasharray:1; stroke-dashoffset:1;
+    animation:draw 1.8s .15s ease-out forwards;
+  }
+  @keyframes draw{to{stroke-dashoffset:0}}
+
+  h1{margin:.5rem 0 .2rem; font-size:2rem; font-weight:700; letter-spacing:-.02em; line-height:1.05}
+  .identity{margin:0; color:var(--muted); font-size:.98rem; max-width:40ch}
+
+  /* ---- résumé chooser ---- */
+  .resume{margin-top:26px}
+  h2{margin:0; font-size:1.06rem; font-weight:600; letter-spacing:-.01em}
+  .sub{margin:.2rem 0 14px; color:var(--muted); font-size:.9rem}
+
+  .seg{
+    position:relative; display:grid; grid-template-columns:repeat(3,1fr);
+    background:var(--accent-soft); border-radius:10px; padding:4px;
+  }
+  .seg-ind{
+    position:absolute; top:4px; bottom:4px; left:4px; width:calc((100% - 8px)/3);
+    background:var(--surface); border-radius:7px;
+    box-shadow:0 2px 6px -2px rgba(20,36,42,.3);
+    transform:translateX(calc(var(--i,0) * 100%));
+    transition:transform .26s cubic-bezier(.4,.1,.2,1);
+  }
+  .seg-btn{
+    position:relative; z-index:1; appearance:none; border:0; background:transparent;
+    font:inherit; font-weight:500; color:var(--muted);
+    padding:9px 4px; border-radius:7px; cursor:pointer;
+    transition:color .2s;
+  }
+  .seg-btn[aria-selected="true"]{color:var(--accent); font-weight:600}
+  .seg-btn:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+
+  .desc{margin:14px 2px 12px; font-size:.95rem; color:var(--ink); min-height:2.8em}
+
+  .preview{
+    display:block; position:relative; border:1px solid var(--line);
+    border-radius:10px; overflow:hidden; background:#fff;
+    aspect-ratio:8.5 / 3.5; box-shadow:var(--shadow);
+    text-decoration:none;
+  }
+  .preview img{width:100%; height:100%; object-fit:cover; object-position:top center; display:block}
+  .preview::after{
+    content:""; position:absolute; inset:auto 0 0 0; height:42%;
+    background:linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,.92));
+    pointer-events:none;
+  }
+  .preview-hint{
+    position:absolute; left:0; right:0; bottom:10px; z-index:1; text-align:center;
+    color:#1f4e5f; font-size:.82rem; font-weight:600;
+    opacity:0; transform:translateY(4px); transition:opacity .2s, transform .2s;
+  }
+  .preview:hover .preview-hint,.preview:focus-visible .preview-hint{opacity:1; transform:none}
+  .preview:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+
+  .actions{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px}
   .btn{
-    display:flex; align-items:center; justify-content:space-between;
-    padding:15px 18px; border-radius:11px; text-decoration:none;
-    font-size:1.05rem; font-weight:600; border:1.5px solid var(--line);
-    color:var(--ink); background:transparent; transition:transform .05s ease, border-color .15s;
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    padding:12px 14px; border-radius:10px; font-size:.95rem; font-weight:600;
+    text-decoration:none; border:1.5px solid var(--line); color:var(--ink);
+    background:var(--surface); transition:border-color .15s, background .15s, transform .04s;
   }
-  .btn:active{transform:scale(.99)}
-  .btn .sub{font-weight:400; color:var(--muted); font-size:.85rem}
+  .btn svg{width:17px; height:17px; flex:none}
   .btn.primary{background:var(--accent); border-color:var(--accent); color:#fff}
-  .btn.primary .sub{color:rgba(255,255,255,.8)}
-  .btn .arrow{color:var(--accent); font-weight:700}
-  .btn.primary .arrow{color:#fff}
   .btn:hover{border-color:var(--accent)}
-  footer{margin-top:22px; text-align:center; color:var(--muted); font-size:.82rem}
-  footer a{color:var(--muted)}
+  .btn.primary:hover{background:#1a4453}
+  .btn:active{transform:translateY(1px)}
+  .btn:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+
+  /* ---- secondary links ---- */
+  .links{margin-top:22px; border-top:1px solid var(--line)}
+  .row{
+    display:flex; align-items:center; gap:13px; padding:15px 2px;
+    border-bottom:1px solid var(--line); text-decoration:none; color:var(--ink);
+  }
+  .row:hover{color:var(--accent)}
+  .row:focus-visible{outline:2px solid var(--accent); outline-offset:-2px; border-radius:6px}
+  .row .ic{width:19px; height:19px; flex:none; color:var(--accent)}
+  .row .name{font-weight:500}
+  .row .meta{margin-left:auto; color:var(--muted); font-size:.85rem; font-weight:400;
+    max-width:52%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+
+  footer{margin-top:18px; color:var(--muted); font-size:.82rem}
+
+  @media (max-width:380px){
+    .card{padding:24px 18px 18px}
+    h1{font-size:1.72rem}
+    .row .meta{display:none}
+  }
 </style>
 </head>
 <body>
   <main class="card">
-    <div class="bar"></div>
-    <div class="inner">
+    <header class="hero">
+      <svg class="trace" viewBox="0 0 640 72" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+        <line class="base" x1="0" y1="40" x2="640" y2="40"></line>
+        <path class="wave" pathLength="1"
+          d="M0,40 H110 Q122,30 134,40 H150 L158,40 L164,53 L172,13 L180,57 L186,40 H202 Q222,28 242,40 H300 Q311,31 322,40 Q330,49 338,40 Q345,32 352,40 Q358,48 364,40 Q369,33 374,40 Q379,47 384,40 Q388,34 392,40 Q396,46 400,40 Q403,35 406,40 Q409,45 412,40 H640"></path>
+      </svg>
       <h1>Joseph Mesches</h1>
-      <p class="titles">
-        <span class="hl">Electrical Engineering Student</span> · Colorado State University<br>
-        <span class="hl">Flight Paramedic (FP-C)</span>
-      </p>
+      <p class="identity">Electrical engineering student at Colorado State University, and critical-care flight paramedic (FP-C).</p>
+    </header>
 
-      <nav class="links">
-        <a class="btn primary" href="Mesches_Resume.pdf" download>
-          <span>Résumé <span class="sub">1-page</span></span><span class="arrow">↓</span>
-        </a>
-        <a class="btn" href="Mesches_CV.pdf" download>
-          <span>Full CV <span class="sub">complete</span></span><span class="arrow">↓</span>
-        </a>
-        <a class="btn" href="https://www.linkedin.com/in/joe-mesches">
-          <span>LinkedIn</span><span class="arrow">→</span>
-        </a>
-        <a class="btn" href="mailto:jmesches@gmail.com">
-          <span>Email</span><span class="arrow">→</span>
-        </a>
-      </nav>
+    <section class="resume" aria-labelledby="resume-h">
+      <h2 id="resume-h">Résumé</h2>
+      <p class="sub">Three versions, tailored by focus. Pick one to preview or download.</p>
 
-      <footer>Machine Learning · Signal Processing · Embedded Systems</footer>
-    </div>
+      <div class="seg" role="tablist" aria-label="Résumé focus">
+        <span class="seg-ind" aria-hidden="true"></span>
+        <button class="seg-btn" role="tab" aria-selected="true"  data-key="biomedical">Biomedical</button>
+        <button class="seg-btn" role="tab" aria-selected="false" data-key="hardware">Hardware</button>
+        <button class="seg-btn" role="tab" aria-selected="false" data-key="ml">ML</button>
+      </div>
+
+      <p class="desc" id="desc">Clinical cardiac background and machine learning for ECG interpretation.</p>
+
+      <a class="preview" id="preview-link" href="Mesches_Resume_Biomedical.pdf" target="_blank" rel="noopener">
+        <img id="preview-img" src="previews/biomedical.png" alt="First page of the biomedical résumé">
+        <span class="preview-hint">Open full résumé</span>
+      </a>
+
+      <div class="actions">
+        <a class="btn primary" id="open-btn" href="Mesches_Resume_Biomedical.pdf" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3h7v7"/><path d="M21 3l-9 9"/><path d="M19 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h6"/></svg>
+          Open résumé
+        </a>
+        <a class="btn" id="dl-btn" href="Mesches_Resume_Biomedical.pdf" download>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+          Download
+        </a>
+      </div>
+    </section>
+
+    <nav class="links" aria-label="More about Joseph">
+      <a class="row" href="Mesches_CV.pdf" target="_blank" rel="noopener">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8"/><path d="M8 17h8"/><path d="M8 9h2"/></svg>
+        <span class="name">Full CV</span><span class="meta">complete history, PDF</span>
+      </a>
+      <a class="row" href="https://www.linkedin.com/in/joe-mesches">
+        <svg class="ic" viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46zM5.34 7.43a2.07 2.07 0 1 1 0-4.14 2.07 2.07 0 0 1 0 4.14zM7.12 20.45H3.55V9h3.57zM22.23 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.46c.98 0 1.77-.77 1.77-1.73V1.73C24 .77 23.21 0 22.23 0z"/></svg>
+        <span class="name">LinkedIn</span><span class="meta">in/joe-mesches</span>
+      </a>
+      <a class="row" href="mailto:jmesches@gmail.com">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+        <span class="name">Email</span><span class="meta">jmesches@gmail.com</span>
+      </a>
+    </nav>
+
+    <footer>Fort Collins, Colorado</footer>
   </main>
+
+  <script>
+    (function(){
+      var V = {
+        biomedical:{i:0, pdf:"Mesches_Resume_Biomedical.pdf", img:"previews/biomedical.png",
+          desc:"Clinical cardiac background and machine learning for ECG interpretation.",
+          alt:"First page of the biomedical résumé"},
+        hardware:{i:1, pdf:"Mesches_Resume_Hardware.pdf", img:"previews/hardware.png",
+          desc:"PCB design, embedded systems, and hardware bring-up.",
+          alt:"First page of the hardware résumé"},
+        ml:{i:2, pdf:"Mesches_Resume_ML.pdf", img:"previews/ml.png",
+          desc:"Machine learning, signal processing, and embedded systems.",
+          alt:"First page of the machine-learning résumé"}
+      };
+      var btns = Array.prototype.slice.call(document.querySelectorAll(".seg-btn"));
+      var ind = document.querySelector(".seg-ind");
+      var desc = document.getElementById("desc");
+      var img = document.getElementById("preview-img");
+      var link = document.getElementById("preview-link");
+      var openB = document.getElementById("open-btn");
+      var dlB = document.getElementById("dl-btn");
+
+      // warm the cache so switching previews doesn't flash
+      Object.keys(V).forEach(function(k){ var p = new Image(); p.src = V[k].img; });
+
+      function select(key, focus){
+        var v = V[key];
+        ind.style.setProperty("--i", v.i);
+        btns.forEach(function(b){ b.setAttribute("aria-selected", b.dataset.key === key ? "true":"false"); });
+        desc.textContent = v.desc;
+        img.src = v.img; img.alt = v.alt;
+        link.href = v.pdf; openB.href = v.pdf; dlB.href = v.pdf;
+        if(focus){ var active = btns.find(function(b){return b.dataset.key===key;}); active && active.focus(); }
+      }
+
+      btns.forEach(function(b, idx){
+        b.addEventListener("click", function(){ select(b.dataset.key); });
+        b.addEventListener("keydown", function(e){
+          if(e.key==="ArrowRight" || e.key==="ArrowLeft"){
+            e.preventDefault();
+            var n = e.key==="ArrowRight" ? (idx+1)%btns.length : (idx-1+btns.length)%btns.length;
+            select(btns[n].dataset.key, true);
+          }
+        });
+      });
+    })();
+  </script>
 </body>
 </html>
